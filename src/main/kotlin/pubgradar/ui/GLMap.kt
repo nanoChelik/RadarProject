@@ -552,8 +552,10 @@ class GLMap(private val jsettings : Settings.jsonsettings) : InputAdapter() , Ap
 
       markers = arrayOf(
           markerAtlas.findRegion("marker1") , markerAtlas.findRegion("marker2") ,
-          markerAtlas.findRegion("marker3") , markerAtlas.findRegion("marker4")
-                       )
+          markerAtlas.findRegion("marker3") , markerAtlas.findRegion("marker4") ,
+          markerAtlas.findRegion("marker5") , markerAtlas.findRegion("marker6") ,
+          markerAtlas.findRegion("marker7") , markerAtlas.findRegion("marker8")
+              )
 
       val generatorHub = FreeTypeFontGenerator(Gdx.files.internal("font/AGENCYFB.TTF"))
       val paramHub = FreeTypeFontParameter()
