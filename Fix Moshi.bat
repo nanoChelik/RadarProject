@@ -12,6 +12,7 @@ echo ---------------------------------------------------------------------
 
 timeout 10
 
+del /f C:\Users\%username%\.m2
 mvn -T 1C clean dependency:copy-dependencies package
 
 timeout 10
