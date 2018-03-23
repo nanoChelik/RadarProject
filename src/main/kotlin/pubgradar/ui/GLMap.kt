@@ -70,6 +70,7 @@ import pubgradar.struct.Item.Companion.order
 import pubgradar.struct.PlayerState
 import pubgradar.struct.Team
 import pubgradar.struct.Weapon
+import pubgradar.util.debugln
 import pubgradar.util.settings.Settings
 import pubgradar.util.tuple4
 import java.text.DecimalFormat
@@ -729,12 +730,11 @@ class GLMap(private val jsettings : Settings.jsonsettings) : InputAdapter() , Ap
          drawMapMarkers()
          drawVehicles(vehicles)
          drawCorpse()
-         drawAirDrop()
          drawMapMarkers()
          drawItem()
          drawGrenades(grenades)
          drawMapMarkers()
-
+         drawAirDrop()
       }
 
 
@@ -1441,18 +1441,26 @@ class GLMap(private val jsettings : Settings.jsonsettings) : InputAdapter() , Ap
    private fun SpriteBatch.drawCorpse()
    {
       corpseLocation.values.forEach {
-         val (x , y) = it
+        if(airDropLocation.values.contains(it)){
+           debugln{("Ignored corpse locations in airdrop locations")}
+        }else{
+         val (x , y, z) = it
          if (! clipBound.contains(x , y)) return@forEach
          draw(corpseIcon , x , y , 0f , corpseScale , true)
-      }
+      }}
    }
 
    private fun SpriteBatch.drawAirDrop()
    {
       airDropLocation.values.forEach {
+         if(corpseLocation.contains(it)){
+            debugln{("Ignored airdrop locations in corpse locations")}
+         }else{
          val (x , y) = it
          if (! clipBound.contains(x , y)) return@forEach
+
          draw(carePackage , x , y , - 90f , airDropScale , false)
+      }
       }
    }
 
