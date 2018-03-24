@@ -1006,7 +1006,6 @@ class GLMap(private val jsettings : Settings.jsonsettings) : InputAdapter() , Ap
          drawCircles()
          drawAttackLine()
          drawAirDropLine()
-
       }
 
       draw(Filled) {
@@ -1263,13 +1262,16 @@ class GLMap(private val jsettings : Settings.jsonsettings) : InputAdapter() , Ap
              false , true
              )
          drawVehicles(vehicles)
-
+         drawAirDrop()
+         drawMapMarkers()
+         drawItem()
       }
       shapeRenderer.projectionMatrix = miniMapCamera.combined
       Gdx.gl.glEnable(GL20.GL_BLEND)
       draw(Filled) {
          drawPlayersH(players)
          drawPlayersMini(parachutes , players)
+
       }
       draw(Line) {
          players?.forEach {
