@@ -25,7 +25,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Filled
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType.Line
 import com.badlogic.gdx.math.*
-import main.util.Settings
 import org.lwjgl.opengl.GL11.GL_TEXTURE_BORDER_COLOR
 import org.lwjgl.opengl.GL11.glTexParameterfv
 import org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER
@@ -71,6 +70,8 @@ import pubgradar.struct.Item.Companion.order
 import pubgradar.struct.PlayerState
 import pubgradar.struct.Team
 import pubgradar.struct.Weapon
+import pubgradar.util.debugln
+import pubgradar.util.settings.Settings
 import pubgradar.util.tuple4
 import java.text.DecimalFormat
 import java.util.*
@@ -123,7 +124,7 @@ class GLMap(private val jsettings : Settings.jsonsettings) : InputAdapter() , Ap
       config.setResizable(true)
       config.useVsync(true)
       config.setIdleFPS(1)
-      config.setBackBufferConfig(8 , 8 , 8 , 8 , 32 , 0 , 2)
+      config.setBackBufferConfig(8 , 8 , 8 , 8 , 16 , 1 , 2)
       Lwjgl3Application(this , config)
    }
 
@@ -558,7 +559,7 @@ class GLMap(private val jsettings : Settings.jsonsettings) : InputAdapter() , Ap
           markerAtlas.findRegion("marker3") , markerAtlas.findRegion("marker4") ,
           markerAtlas.findRegion("marker5") , markerAtlas.findRegion("marker6") ,
           markerAtlas.findRegion("marker7") , markerAtlas.findRegion("marker8")
-              )
+                       )
 
       val generatorHub = FreeTypeFontGenerator(Gdx.files.internal("font/AGENCYFB.TTF"))
       val paramHub = FreeTypeFontParameter()
@@ -736,12 +737,11 @@ class GLMap(private val jsettings : Settings.jsonsettings) : InputAdapter() , Ap
          drawMapMarkers()
          drawVehicles(vehicles)
          drawCorpse()
-         drawAirDrop()
          drawMapMarkers()
          drawItem()
          drawGrenades(grenades)
          drawMapMarkers()
-
+         drawAirDrop()
       }
 
 
@@ -1448,18 +1448,26 @@ class GLMap(private val jsettings : Settings.jsonsettings) : InputAdapter() , Ap
    private fun SpriteBatch.drawCorpse()
    {
       corpseLocation.values.forEach {
-         val (x , y) = it
+        if(airDropLocation.values.contains(it)){
+           debugln{("Ignored corpse locations in airdrop locations")}
+        }else{
+         val (x , y, z) = it
          if (! clipBound.contains(x , y)) return@forEach
          draw(corpseIcon , x , y , 0f , corpseScale , true)
-      }
+      }}
    }
 
    private fun SpriteBatch.drawAirDrop()
    {
       airDropLocation.values.forEach {
+         if(corpseLocation.contains(it)){
+            debugln{("Ignored airdrop locations in corpse locations")}
+         }else{
          val (x , y) = it
          if (! clipBound.contains(x , y)) return@forEach
+
          draw(carePackage , x , y , - 90f , airDropScale , false)
+      }
       }
    }
 
@@ -1715,6 +1723,8 @@ class GLMap(private val jsettings : Settings.jsonsettings) : InputAdapter() , Ap
              jsettings.UMP&&"Item_Weapon_UMP_C" in items||
              jsettings.UZI&&"Item_Weapon_UZI_C" in items||
              jsettings.Vector&&"Item_Weapon_Vector_C" in items||
+
+
              jsettings.QDSnipe&&"Item_Attach_Weapon_Magazine_ExtendedQuickDraw_SniperRifle_C" in items||
              jsettings.ExSR&&"Item_Attach_Weapon_Magazine_Extended_SniperRifle_C" in items||
              jsettings.ExSMG&&"Item_Attach_Weapon_Magazine_Extended_Medium_C" in items||
@@ -1732,6 +1742,13 @@ class GLMap(private val jsettings : Settings.jsonsettings) : InputAdapter() , Ap
              jsettings.CompensatorAR&&"Item_Attach_Weapon_Muzzle_Compensator_Medium_C" in items||
              jsettings.Foregrip&&"Item_Attach_Weapon_Lower_Foregrip_C" in items||
              jsettings.AngledForegrip&&"Item_Attach_Weapon_Lower_AngledForeGrip_C" in items||
+
+
+             jsettings.G18&&"Item_Weapon_G18_C" in items||
+             jsettings.Rhino45&&"Item_Weapon_Rhino_C" in items||
+             jsettings.M1911&&"Item_Weapon_M1911_C" in items||
+             jsettings.R1895&&"Item_Weapon_NagantM1895_C" in items||
+             jsettings.M9&&"Item_Weapon_M9_C" in items||
 
              items !in weaponsToFilter&&items !in scopesToFilter&&items !in attachToFilter&&items !in level2Filter&&items !in level3Filter&&items !in level23Filter
              &&items !in level1Filter&&items !in ammoToFilter&&items !in healsToFilter&&items !in throwToFilter&&items !in equipFilter
